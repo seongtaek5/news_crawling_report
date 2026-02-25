@@ -2,8 +2,8 @@ name: Daily News Report
 
 on:
   schedule:
-    - cron: '0 23 * * *'  # 매일 오전 8시 KST
-  workflow_dispatch:        # 수동 실행 버튼도 추가
+    - cron: '0 23 * * *'
+  workflow_dispatch:
 
 jobs:
   run-pipeline:
@@ -21,7 +21,14 @@ jobs:
       - name: 패키지 설치
         run: pip install -r requirements.txt
 
-      - name: 뉴스 수집 및 분석 실행
+      - name: 뉴스 수집
+        run: python main.py
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
+          NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
+
+      - name: 심층 분석 실행
         run: python generate_indepth_analysis.py
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
